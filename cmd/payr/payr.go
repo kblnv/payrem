@@ -40,7 +40,7 @@ func cmdInit(configPath string) {
     "port": "8080"
   },
 
-  "plugins": "./plugins",
+  "plugins": "<plugins_dir>",
 
   "transports": {
     "telegram": {
