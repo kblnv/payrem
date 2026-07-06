@@ -67,6 +67,7 @@ func printGlobalUsage() {
 
 func (c *Cmd) parseInit() OutParams {
 	fs := flag.NewFlagSet("init", flag.ExitOnError)
+	configPath := fs.String("path", c.defaultConfigPath, "config path")
 	fs.Usage = func() {
 		println("Usage: payr init")
 		fs.PrintDefaults()
@@ -75,7 +76,7 @@ func (c *Cmd) parseInit() OutParams {
 
 	return OutParams{
 		Command:    CommandInit,
-		ConfigPath: c.defaultConfigPath,
+		ConfigPath: *configPath,
 	}
 }
 

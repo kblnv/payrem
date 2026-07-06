@@ -27,13 +27,13 @@ func main() {
 
 	switch params.Command {
 	case "init":
-		cmdInit()
+		cmdInit(params.ConfigPath)
 	case "run":
 		cmdRun(params.ConfigPath)
 	}
 }
 
-func cmdInit() {
+func cmdInit(configPath string) {
 	config := `{
   "server": {
     "host": "127.0.0.1",
@@ -58,7 +58,7 @@ func cmdInit() {
   }
 }`
 
-	if err := os.WriteFile(DEFAULT_CONFIG_PATH, []byte(config), 0644); err != nil {
+	if err := os.WriteFile(configPath, []byte(config), 0644); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create config: %v\n", err)
 		os.Exit(1)
 	}
