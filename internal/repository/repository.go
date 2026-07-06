@@ -7,7 +7,7 @@ import (
 	"payr/internal/logger"
 )
 
-type Event struct {
+type Notification struct {
 	Name     string          `json:"name"`
 	Plugin   string          `json:"plugin"`
 	Settings json.RawMessage `json:"settings"`
@@ -19,10 +19,10 @@ type Server struct {
 }
 
 type Registry struct {
-	Server     Server                     `json:"server"`
-	Plugins    string                     `json:"plugins"`
-	Transports map[string]json.RawMessage `json:"transports"`
-	Events     map[string]Event           `json:"events"`
+	Server        Server                     `json:"server"`
+	Plugins       string                     `json:"plugins"`
+	Transports    map[string]json.RawMessage `json:"transports"`
+	Notifications map[string]Notification    `json:"notifications"`
 }
 
 type Config struct {

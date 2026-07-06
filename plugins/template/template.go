@@ -38,8 +38,8 @@ func New(rawConfig json.RawMessage) (plugins.Plugin, error) {
 func (t *TemplatePlugin) Execute(context *plugins.Context) (string, error) {
 	var data map[string]any
 
-	if len(context.EventMeta) > 0 {
-		if err := json.Unmarshal(context.EventMeta, &data); err != nil {
+	if len(context.NotificationMeta) > 0 {
+		if err := json.Unmarshal(context.NotificationMeta, &data); err != nil {
 			return "", err
 		}
 	} else {

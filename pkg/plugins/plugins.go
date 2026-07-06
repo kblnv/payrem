@@ -3,7 +3,7 @@ package plugins
 import "encoding/json"
 
 type Context struct {
-	EventMeta json.RawMessage
+	NotificationMeta json.RawMessage
 }
 
 type Plugin interface {

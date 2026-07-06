@@ -6,15 +6,15 @@ import (
 	"payr/internal/repository"
 )
 
-type Event struct {
+type Notification struct {
 	Name     string
 	Plugin   string
 	Settings json.RawMessage
 }
 
 type Registry struct {
-	Events     map[string]Event
-	Transports map[string]json.RawMessage
+	Notifications map[string]Notification
+	Transports    map[string]json.RawMessage
 }
 
 type GlobalSettings struct {
@@ -33,12 +33,12 @@ func GetGlobalSettings(registryDTO *repository.Registry) *GlobalSettings {
 
 func GetRegistry(registryDTO *repository.Registry) *Registry {
 	registry := Registry{
-		Events:     make(map[string]Event, len(registryDTO.Events)),
-		Transports: make(map[string]json.RawMessage, len(registryDTO.Transports)),
+		Notifications: make(map[string]Notification, len(registryDTO.Notifications)),
+		Transports:    make(map[string]json.RawMessage, len(registryDTO.Transports)),
 	}
 
-	for name, e := range registryDTO.Events {
-		registry.Events[name] = Event{
+	for name, e := range registryDTO.Notifications {
+		registry.Notifications[name] = Notification{
 			Name:     e.Name,
 			Plugin:   e.Plugin,
 			Settings: e.Settings,

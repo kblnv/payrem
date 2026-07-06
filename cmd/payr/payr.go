@@ -48,7 +48,7 @@ func cmdInit() {
     }
   },
 
-  "events": {
+  "notifications": {
     "hello": {
       "plugin": "template",
       "settings": {

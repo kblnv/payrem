@@ -34,10 +34,10 @@ type RequestTransport struct {
 	To        string `json:"to"`
 }
 
-type EventTriggerRequestBody struct {
-	Event      string             `json:"event"`
-	Meta       json.RawMessage    `json:"meta"`
-	Transports []RequestTransport `json:"transports"`
+type NotificationTriggerRequestBody struct {
+	Notification string             `json:"notification"`
+	Meta         json.RawMessage    `json:"meta"`
+	Transports   []RequestTransport `json:"transports"`
 }
 
 func New(config Config) *Server {
@@ -54,7 +54,7 @@ func New(config Config) *Server {
 		log:               config.Logger,
 	}
 
-	mux.HandleFunc("/event", server.handleEventTrigger)
+	mux.HandleFunc("/notification", server.handleNotificationTrigger)
 
 	return &server
 }
@@ -68,7 +68,7 @@ func (s *Server) Start() {
 	}
 }
 
-func (s *Server) handleEventTrigger(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleNotificationTrigger(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -76,7 +76,7 @@ func (s *Server) handleEventTrigger(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
-	var payload EventTriggerRequestBody
+	var payload NotificationTriggerRequestBody
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		s.log.Warn("failed to parse request body: %v", err)
@@ -84,31 +84,31 @@ func (s *Server) handleEventTrigger(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.log.Info("handling event: %v", payload.Event)
+	s.log.Info("handling notification: %v", payload.Notification)
 
-	event, ok := s.registry.Events[payload.Event]
+	notification, ok := s.registry.Notifications[payload.Notification]
 	if !ok {
-		s.log.Warn("event not found: %v", payload.Event)
-		http.Error(w, "event not found", http.StatusNotFound)
+		s.log.Warn("notification not found: %v", payload.Notification)
+		http.Error(w, "notification not found", http.StatusNotFound)
 		return
 	}
 
-	constructor := s.pluginsManager.GetConstructor(event.Plugin)
+	constructor := s.pluginsManager.GetConstructor(notification.Plugin)
 	if constructor == nil {
-		s.log.Error("plugin constructor not found: %v", event.Plugin)
+		s.log.Error("plugin constructor not found: %v", notification.Plugin)
 		http.Error(w, "plugin not found", http.StatusInternalServerError)
 		return
 	}
 
-	plugin, err := constructor(event.Settings)
+	plugin, err := constructor(notification.Settings)
 	if err != nil {
-		s.log.Error("failed to create plugin %s: %v", event.Plugin, err)
+		s.log.Error("failed to create plugin %s: %v", notification.Plugin, err)
 		http.Error(w, "failed to create plugin", http.StatusInternalServerError)
 		return
 	}
 
 	ctx := api.Context{
-		EventMeta: payload.Meta,
+		NotificationMeta: payload.Meta,
 	}
 
 	result, err := plugin.Execute(&ctx)
